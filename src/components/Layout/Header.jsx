@@ -117,7 +117,7 @@ const Header = ({ activeHeading }) => {
           <div>
             <Link to="/">
               <img
-                 src="/TamkeenLogo.jpeg"
+                 src="/tamkeenLogo.jpeg"
                  style={{ height: "70px", width: "250px" }}
                 alt=""
               />
