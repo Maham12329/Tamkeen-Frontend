@@ -7,7 +7,7 @@ import L from 'leaflet';
 import Header from '../Layout/Header';
 import Footer from '../Layout/Footer';
 import Loader from '../Layout/Loader';
-
+import { server } from '../../server';
 const modalStyle = {
   zIndex: 1000,
 };
@@ -113,7 +113,7 @@ const RegionAreaAnalysisDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:8000/api/v2/sales-analysis/category-region-analysis');
+        const response = await axios.get(`${server}/sales-analysis/category-region-analysis`);
         const processedData = await processRawData(response.data.salesAnalysis);
         setSalesData(processedData);
         
