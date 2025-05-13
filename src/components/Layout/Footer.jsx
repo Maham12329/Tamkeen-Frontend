@@ -17,7 +17,7 @@ const Footer = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:px-8 px-5 py-16 text-center md:text-left">
                 <div className="flex flex-col items-center sm:items-start">
                     <img
-                        src="/TamkeenLogo.jpeg"
+                         src={`${process.env.PUBLIC_URL}/tamkeenLogo.jpeg`}
                         style={{ height: "70px", width: "250px" }}
                         alt="Tamkeen Logo"
                     />

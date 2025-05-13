@@ -14,9 +14,9 @@ const DashboardHeader = () => {
             <div>
                 <Link to="/dashboard">
                     <img
-                          src="/TamkeenLogo.jpeg"
+                        src={`${process.env.PUBLIC_URL}/tamkeenLogo.jpeg`}
                           style={{ height: "70px", width: "250px" }}
-                        alt=""
+                        alt="Tamkeen Logo"
                     />
                 </Link>
             </div>

@@ -305,9 +305,9 @@ text-[12px] leading-tight text-center">
           <div>
             <Link to="/">
               <img
-                src="/TamkeenLogo.jpeg"
+               src={`${process.env.PUBLIC_URL}/tamkeenLogo.jpeg`}
                 style={{ height: "70px", width: "250px" }}
-                alt=""
+                alt="Tamkeen Logo"
                 className="mt-3 cursor-pointer"
               />
             </Link>
