@@ -117,9 +117,10 @@ const Header = ({ activeHeading }) => {
           <div>
             <Link to="/">
               <img
-                 src="/tamkeenLogo.jpeg"
+               src={`${process.env.PUBLIC_URL}/tamkeenLogo.jpeg`}
+
                  style={{ height: "70px", width: "250px" }}
-                alt=""
+                alt="Tamkeen Logo"
               />
             </Link>
           </div>
