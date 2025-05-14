@@ -111,7 +111,7 @@ const UserWorkshopView = () => {
   // Simple header section with navigation without animation
   const SimpleHeader = () => (
     <div className="relative py-6 mb-8 bg-[#f7f1f1]">
-      <Header />
+      <Header activeHeading={6} />
       
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">

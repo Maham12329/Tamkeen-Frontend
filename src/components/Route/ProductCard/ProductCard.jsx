@@ -45,7 +45,7 @@ const ProductCard = ({ data, isEvent }) => {
       <Link to={`${isEvent ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}`}>
         <div className="aspect-square overflow-hidden">
           <img
-            src={`${backend_url}/uploads/${data.images?.[0]}`}
+            src={`${backend_url}${data.images?.[0]}`}
             alt={data.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />

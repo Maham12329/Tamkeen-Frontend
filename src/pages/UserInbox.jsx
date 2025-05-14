@@ -7,12 +7,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowsAlt, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
-import { MdTranslate, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import styles from "../styles/styles";
 import moment from "moment";
 import ProfileSidebar from "../components/Profile/ProfileSidebar";
 
-const ENDPOINT = "http://localhost:4000";
+//const ENDPOINT = "http://localhost:4000";
+const ENDPOINT = "https://tamkeenfypsocket.onrender.com/";
 let socket;
 
 const UserInbox = () => {
@@ -327,7 +327,7 @@ const UserInbox = () => {
               userData={userData}
               activeStatus={activeStatus}
               scrollRef={scrollRef}
-              handleImageUpload={handleImageUpload} 
+              handleImageUpload={handleImageUpload} // Ensure you include this if using image uploads
             />
           </div>
         ) : (
@@ -361,6 +361,25 @@ const MessageList = ({
     navigate(`/inbox?${id}`);
     setOpen(true);
   };
+
+
+/*const MessageList = ({
+  data,
+  index,
+  setOpen,
+  setCurrentChat,
+  me,
+  setUserData,
+  online,
+  setActiveStatus,
+}) => {
+  const [active, setActive] = useState(0);
+  const [user, setUser] = useState([]);
+  const navigate = useNavigate();
+  const handleClick = (id) => {
+    navigate(`/inbox?${id}`);
+    setOpen(true);
+  };*/
 
   useEffect(() => {
     setActiveStatus(online);
@@ -432,83 +451,36 @@ const SellerInbox = ({
   handleImageUpload,
 }) => {
   const [showTranslated, setShowTranslated] = useState(true);
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  
   return (
     <div className="flex flex-col h-full">
-      {/* Header with user info and translation toggle */}
-      <div className="bg-white shadow-md z-10 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <button
-              onClick={() => setOpen(false)}
-              className="md:hidden mr-4 text-gray-600 hover:text-gray-800 transition-colors duration-150 ease-in-out"
-            >
-              <AiOutlineArrowsAlt size={24} />
-            </button>
-            <img
-              src={`${backend_url}${userData?.avatar}`}
-              alt=""
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <div className="ml-4">
-              <h2 className="text-lg font-semibold text-gray-800">{userData?.name}</h2>
-              <p className="text-sm text-gray-600">
-                {activeStatus ? "Active Now" : "Offline"}
-              </p>
-            </div>
-          </div>
-          
-          <div className="relative">
-            <button 
-              className={`flex items-center px-4 py-2 rounded-full text-sm transition-all duration-300 ${
-                showTranslated 
-                  ? "bg-[#a67d6d] text-white" 
-                  : "bg-gray-200 text-gray-700"
-              }`}
-              onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-            >
-              <MdTranslate className="mr-2" size={18} />
-              {showTranslated ? "Translate to Urdu" : "Show Original"}
-              <MdOutlineKeyboardArrowDown className="ml-1" size={16} />
-            </button>
-            
-            {showLanguageMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                <div className="py-1">
-                  <button 
-                    className={`flex items-center px-4 py-2 text-sm w-full text-left hover:bg-gray-100 ${showTranslated ? 'font-medium text-[#a67d6d]' : ''}`} 
-                    onClick={() => {
-                      setShowTranslated(true);
-                      setShowLanguageMenu(false);
-                    }}
-                  >
-                    <span className="ml-2">Show in Urdu</span>
-                    {showTranslated && <span className="ml-auto">✓</span>}
-                  </button>
-                  <button 
-                    className={`flex items-center px-4 py-2 text-sm w-full text-left hover:bg-gray-100 ${!showTranslated ? 'font-medium text-[#a67d6d]' : ''}`}
-                    onClick={() => {
-                      setShowTranslated(false);
-                      setShowLanguageMenu(false);
-                    }}
-                  >
-                    <span className="ml-2">Show Original</span>
-                    {!showTranslated && <span className="ml-auto">✓</span>}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+      <div className="bg-white shadow-md z-10 p-4 flex items-center">
+        <button
+          onClick={() => setOpen(false)}
+          className="md:hidden mr-4 text-gray-600 hover:text-gray-800 transition-colors duration-150 ease-in-out"
+        >
+          <AiOutlineArrowsAlt size={24} />
+        </button>
+        <img
+          src={`${backend_url}${userData?.avatar}`}
+          alt=""
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <div className="ml-4">
+          <h2 className="text-lg font-semibold text-gray-800">{userData?.name}</h2>
+          <p className="text-sm text-gray-600">
+            {activeStatus ? "Active Now" : "Offline"}
+          </p>
         </div>
       </div>
+      
+      <button
+          className="p-2 bg-[#a67d6d] text-white my-2"
+          onClick={() => setShowTranslated(!showTranslated)}
+        >
+          {showTranslated ? "Show Original" : "Show Translated"}
+        </button>
 
-      {/* Chat messages area */}
-      <div 
-        className="flex-grow overflow-y-auto p-4" 
-        style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}
-        onClick={() => showLanguageMenu && setShowLanguageMenu(false)}
-      >
+      <div className="flex-grow overflow-y-auto p-4" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}>
         {messages &&
           messages.map((item, index) => (
             <div
@@ -534,26 +506,18 @@ const SellerInbox = ({
                       : "bg-[#d8c4b8] text-gray-800" // Incoming message bubble color
                     }`}
                   >
-                    <p>{showTranslated ? item.translatedText : item.text}</p>
-                    
-                    {/* Small indicator when a message is translated */}
-                    {showTranslated && item.translatedText && item.translatedText !== item.text && (
-                      <div className="flex items-center justify-end mt-1 opacity-70">
-                        <MdTranslate size={12} className="mr-1" />
-                        <span className="text-xs" style={{ fontFamily: "Noto Nastaliq Urdu, Arial, sans-serif" }}>اردو</span>
-                      </div>
-                    )}
+                     <p>{showTranslated ? item.translatedText : item.text}</p>
                   </div>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
-                  {moment(item.createdAt).fromNow()}
-                </p>
+               <p className="text-xs text-gray-500 mt-1">
+  {moment(item.createdAt).fromNow()}
+</p>
+
               </div>
             </div>
           ))}
       </div>
 
-      {/* Message input area */}
       <div className="bg-white border-t border-gray-200 p-4">
         <form
           className="flex items-center"

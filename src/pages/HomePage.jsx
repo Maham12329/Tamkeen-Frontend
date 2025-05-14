@@ -17,7 +17,6 @@ const HomePage = () => {
             <Explore />
             <Whyus />
             <FAQPage />
-            <Avatar/>
             <Footer />
         </div>
     )

@@ -303,8 +303,9 @@ const DashboardHero = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#f7f1f1] p-8">
-            <div className="max-w-[1600px] mx-auto">
+        <div className="min-h-screen bg-[#f7f1f1] p-8 ml-[26px] w-[calc(100%-260px)]">
+            {/* Adjusted positioning to accommodate the fixed sidebar width */}
+            <div className="w-full">
                 <div className="flex justify-between items-center mb-8">
                     <h3 className="text-3xl font-bold text-[#5a4336]">
                         Dashboard Overview

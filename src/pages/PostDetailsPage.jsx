@@ -11,6 +11,8 @@ import {
   MessageSquare,
   Send
 } from 'lucide-react';
+import { AiOutlineFire } from 'react-icons/ai';
+import { BsPersonCheckFill } from 'react-icons/bs';
 
 // Color Scheme
 const colors = {
@@ -31,6 +33,8 @@ const PostDetailsPage = () => {
   const [replyContent, setReplyContent] = useState('');
   const [nestedReplyContent, setNestedReplyContent] = useState({});
   const [activeReplyId, setActiveReplyId] = useState(null);
+  const [topContributors, setTopContributors] = useState([]);
+  const [topHelpers, setTopHelpers] = useState([]);
   const navigate = useNavigate();
 
   // Get the authenticated user's name from Redux
@@ -48,7 +52,60 @@ const PostDetailsPage = () => {
       }
     };
 
+    const fetchAllPosts = async () => {
+      try {
+        const res = await axios.get(`${server}/forum/posts`);
+        
+        // Calculate top contributors based on number of posts
+        const contributorsMap = {};
+        res.data.forEach((post) => {
+          if (!contributorsMap[post.name]) {
+            contributorsMap[post.name] = {
+              name: post.name,
+              contributions: 1,
+            };
+          } else {
+            contributorsMap[post.name].contributions += 1;
+          }
+        });
+
+        // Convert to array and sort by contributions
+        const sortedContributors = Object.values(contributorsMap)
+          .sort((a, b) => b.contributions - a.contributions)
+          .slice(0, 3); // Top 3 contributors
+
+        setTopContributors(sortedContributors);
+
+        // Calculate top helpers based on number of replies
+        const helpersMap = {};
+        res.data.forEach((post) => {
+          if (post.replies && post.replies.length > 0) {
+            post.replies.forEach((reply) => {
+              if (!helpersMap[reply.name]) {
+                helpersMap[reply.name] = {
+                  name: reply.name,
+                  helpfulAnswers: 1,
+                };
+              } else {
+                helpersMap[reply.name].helpfulAnswers += 1;
+              }
+            });
+          }
+        });
+
+        // Convert to array and sort by helpful answers
+        const sortedHelpers = Object.values(helpersMap)
+          .sort((a, b) => b.helpfulAnswers - a.helpfulAnswers)
+          .slice(0, 3); // Top 3 helpers
+
+        setTopHelpers(sortedHelpers);
+      } catch (err) {
+        console.error('Failed to fetch all posts for contributors and helpers');
+      }
+    };
+
     fetchPost();
+    fetchAllPosts();
   }, [postId]);
 
   const handleVote = async (postId, voteType) => {
@@ -104,6 +161,50 @@ const PostDetailsPage = () => {
 
   const toggleNestedReplyForm = (replyId) => {
     setActiveReplyId(activeReplyId === replyId ? null : replyId);
+  };
+
+  const getInitialsAvatar = (name) => {
+    if (!name) return 'U';
+    const nameParts = name.split(' ');
+    if (nameParts.length > 1) {
+      return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const getAvatarColor = (name) => {
+    if (!name) return colors.primary;
+
+    const colorOptions = [
+      colors.primary,
+      colors.secondary,
+      '#d48c8f', // Slightly darker pink
+      '#b38d82', // Muted brown
+    ];
+
+    const charCode = name.charCodeAt(0);
+    return colorOptions[charCode % colorOptions.length];
+  };
+
+  const InitialsAvatar = ({ name }) => {
+    const initials = getInitialsAvatar(name);
+    const bgColor = getAvatarColor(name);
+
+    return (
+      <div
+        className="flex items-center justify-center rounded-full flex-shrink-0"
+        style={{
+          backgroundColor: bgColor,
+          color: colors.white,
+          width: '36px',
+          height: '36px',
+          fontSize: '14px',
+          fontWeight: 'bold',
+        }}
+      >
+        {initials}
+      </div>
+    );
   };
 
   if (loading) return (
@@ -245,71 +346,73 @@ const PostDetailsPage = () => {
     <>
       <Header activeHeading={7} />
       <div className="min-h-screen py-8" style={{ backgroundColor: colors.light }}>
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Main Post */}
-          <div className="bg-white rounded-xl shadow-md mb-6" style={{ borderColor: colors.border }}>
-            <div className="p-6">
-              <h2 
-                className="text-xl font-medium mb-2"
-                style={{ color: colors.dark }}
-              >
-                {post.title}
-              </h2>
-              
-              <div className="text-sm mb-4" style={{ color: colors.primary }}>
-                {post.name} • {formatDate(post.createdAt || new Date())}
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              {/* Main Post */}
+              <div className="bg-white rounded-xl shadow-md mb-6" style={{ borderColor: colors.border }}>
+                <div className="p-6">
+                  <h2 
+                    className="text-xl font-medium mb-2"
+                    style={{ color: colors.dark }}
+                  >
+                    {post.title}
+                  </h2>
+                  
+                  <div className="text-sm mb-4" style={{ color: colors.primary }}>
+                    {post.name} • {formatDate(post.createdAt || new Date())}
+                  </div>
+                  
+                  <div className="mb-4 text-sm" style={{ color: colors.dark }}>
+                    <p>{post.content}</p>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleVote(post._id, 'upvote')}
+                      className="flex items-center px-2 py-1 rounded hover:bg-gray-100"
+                      style={{ color: 'gray' }}
+                    >
+                      <ArrowUp size={16} />
+                      <span className="ml-1">{post.votes}</span>
+                    </button>
+                    <button
+                      onClick={() => handleVote(post._id, 'downvote')}
+                      className="px-2 py-1 rounded hover:bg-gray-100"
+                      style={{ color: 'gray' }}
+                    >
+                      <ArrowDown size={16} />
+                    </button>
+                  </div>
+                </div>
               </div>
               
-              <div className="mb-4 text-sm" style={{ color: colors.dark }}>
-                <p>{post.content}</p>
+              {/* Replies Section */}
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <MessageSquare size={16} style={{ color: colors.primary }} />
+                  <h3 className="ml-2 text-lg font-medium" style={{ color: colors.dark }}>
+                    Replies ({post.replies.length})
+                  </h3>
+                </div>
+                
+                {post.replies.length === 0 ? (
+                  <div className="bg-white p-4 rounded-xl shadow-md" style={{ borderColor: colors.border }}>
+                    <p className="text-sm text-gray-500">No replies yet.</p>
+                  </div>
+                ) : (
+                  <div className="bg-white p-4 rounded-xl shadow-md" style={{ borderColor: colors.border }}>
+                    {renderReplies(post.replies)}
+                  </div>
+                )}
               </div>
-              
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleVote(post._id, 'upvote')}
-                  className="flex items-center px-2 py-1 rounded hover:bg-gray-100"
-                  style={{ color: 'gray' }}
-                >
-                  <ArrowUp size={16} />
-                  <span className="ml-1">{post.votes}</span>
-                </button>
-                <button
-                  onClick={() => handleVote(post._id, 'downvote')}
-                  className="px-2 py-1 rounded hover:bg-gray-100"
-                  style={{ color: 'gray' }}
-                >
-                  <ArrowDown size={16} />
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Replies Section */}
-          <div className="mb-6">
-            <div className="flex items-center mb-4">
-              <MessageSquare size={16} style={{ color: colors.primary }} />
-              <h3 className="ml-2 text-lg font-medium" style={{ color: colors.dark }}>
-                Replies ({post.replies.length})
-              </h3>
-            </div>
-            
-            {post.replies.length === 0 ? (
-              <div className="bg-white p-4 rounded-xl shadow-md" style={{ borderColor: colors.border }}>
-                <p className="text-sm text-gray-500">No replies yet.</p>
-              </div>
-            ) : (
-              <div className="bg-white p-4 rounded-xl shadow-md" style={{ borderColor: colors.border }}>
-                {renderReplies(post.replies)}
-              </div>
-            )}
-          </div>
 
-          {/* Main Reply Form */}
-          <div 
+              {/* Main Reply Form */}
+              <div 
                 className="mt-8 p-6 rounded-xl"
                 style={{ 
                   backgroundColor: colors.tertiary,
-                  border: `1px solid ${colors.lightBorder}`
+                  border: `1px solid ${colors.border}`
                 }}
               >
                 <h4 
@@ -327,10 +430,9 @@ const PostDetailsPage = () => {
                     placeholder="Share your thoughts..."
                     className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 text-gray-700"
                     style={{ 
-                      borderColor: colors.lightBorder,
+                      borderColor: colors.border,
                       backgroundColor: colors.white,
-                      minHeight: '120px',
-                      focusRing: colors.primary
+                      minHeight: '120px'
                     }}
                     required
                   ></textarea>
@@ -349,6 +451,66 @@ const PostDetailsPage = () => {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              {/* Top Contributors Section */}
+              <section className="bg-white rounded-xl shadow-md overflow-hidden">
+                <h2 className="text-lg font-semibold p-4 border-b flex items-center" style={{
+                  background: `linear-gradient(to right, ${colors.secondary}, ${colors.primary})`,
+                  color: colors.dark,
+                }}>
+                  <AiOutlineFire className="mr-2" size={20} style={{ color: colors.primary }} />
+                  Top Contributors
+                </h2>
+                <ul className="divide-y">
+                  {topContributors.length > 0 ? (
+                    topContributors.map((contributor) => (
+                      <li key={contributor.name} className="p-4 hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <InitialsAvatar name={contributor.name} />
+                          <div className="ml-3 flex-1">
+                            <h3 className="font-medium" style={{ color: colors.dark }}>{contributor.name}</h3>
+                            <p style={{ color: '#777' }} className="text-sm">{contributor.contributions} contributions</p>
+                          </div>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="p-4 text-center" style={{ color: '#777' }}>No contributors yet</li>
+                  )}
+                </ul>
+              </section>
+
+              {/* Top Helpers Section */}
+              <section className="bg-white rounded-xl shadow-md overflow-hidden">
+                <h2 className="text-lg font-semibold p-4 border-b flex items-center" style={{
+                  background: `linear-gradient(to right, ${colors.secondary}, ${colors.primary})`,
+                  color: colors.dark,
+                }}>
+                  <BsPersonCheckFill className="mr-2" size={20} style={{ color: colors.primary }} />
+                  Top Helpers
+                </h2>
+                <ul className="divide-y">
+                  {topHelpers.length > 0 ? (
+                    topHelpers.map((helper) => (
+                      <li key={helper.name} className="p-4 hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <InitialsAvatar name={helper.name} />
+                          <div className="ml-3 flex-1">
+                            <h3 className="font-medium" style={{ color: colors.dark }}>{helper.name}</h3>
+                            <p style={{ color: '#777' }} className="text-sm">{helper.helpfulAnswers} helpful answers</p>
+                          </div>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="p-4 text-center" style={{ color: '#777' }}>No helpers yet</li>
+                  )}
+                </ul>
+              </section>
+            </div>
           </div>
         </div>
       </div>

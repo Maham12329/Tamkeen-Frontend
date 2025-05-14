@@ -45,7 +45,7 @@ const Whyus = ({ navbarHeight = '80px' }) => {
   ];
 
   return (
-    <div 
+    <div
       ref={sectionRef}
       className="relative min-h-screen py-20 px-4 overflow-hidden"
       style={{
@@ -79,14 +79,14 @@ const Whyus = ({ navbarHeight = '80px' }) => {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header Section */}
         <div className="text-center mb-20">
-          <h2 
+          <h2
             className={`text-[#5a4336] text-5xl font-bold mb-6 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             Why Choose Us
           </h2>
-          <p 
+          <p
             className={`text-[#5a4336] text-lg max-w-2xl mx-auto transition-all duration-700 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
@@ -101,19 +101,19 @@ const Whyus = ({ navbarHeight = '80px' }) => {
             <div
               key={index}
               className={`group bg-white rounded-2xl p-8 transition-all duration-700 ease-out hover:shadow-2xl relative ${
-                isVisible 
-                  ? 'opacity-100 translate-y-0' 
+                isVisible
+                  ? 'opacity-100 translate-y-0'
                   : 'opacity-0 translate-y-20'
               }`}
               style={{
                 transitionDelay: `${200 + index * 100}ms`,
-                backgroundColor: '#a67d6d15',
+                backgroundColor: 'rgba(255, 255, 255, 0.85)', // Changed to a slightly transparent white for better visibility
                 border: '1px solid rgba(166, 125, 109, 0.1)'
               }}
             >
               {/* Icon & Title Section */}
               <div className="flex items-center mb-6">
-                <div 
+                <div
                   className="p-3 rounded-lg mr-4 transition-transform group-hover:scale-110 duration-500"
                   style={{ backgroundColor: '#a67d6d20' }}
                 >

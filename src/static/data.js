@@ -35,8 +35,8 @@ export const navItems = [
     title: "GIS",
     url: "/sales-analysis",
   }
-  
-  
+ 
+ 
 ];
 
 // branding data
@@ -217,6 +217,7 @@ export const brandingData = [
 ];
 
 // categories data
+ // categories data
 export const categoriesData = [
   {
     id: 1,
@@ -252,8 +253,8 @@ export const categoriesData = [
     subTitle: "",
     image_Url:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvBQPQMVNRd6TtDkGs2dCri0Y-rxKkFOiEWw&usqp=CAU",
-  }
-  ,  {
+  },
+  {
   id: 6,
   title: "Home & Living",
   subTitle: "",
@@ -271,9 +272,6 @@ export const categoriesData = [
   subTitle: "",
   image_Url: "https://cdn.shopify.com/s/files/1/0022/1502/0732/products/wooden-baby-toys.jpg?v=1620229185",
 }
-
-
-
  
 
 ];
@@ -285,25 +283,30 @@ export const footerProductLinks = [
     name: "About us",
     link: "/about",
   },
-  {
-    name: "Careers",
-    link: "/carrers",
-  },
+ 
 
 ];
 
 export const footercompanyLinks = [
   {
     name: "Arts and crafts",
+        link: "/products?category=Arts%20and%20crafts",
+
   },
   {
     name: "Accessories",
+        link: "/products?category=Accesories",
+
   },
   {
     name: "Clothes",
+        link: "/products?category=Cloths",
+
   },
   {
     name: "Services",
+        link: "/servicess",
+
   },
  
 ];
